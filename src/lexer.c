@@ -33,10 +33,33 @@ void add_token(Lexer* lexer, TokenType type, const char* start, int length) {
     token->position = lexer->pos;
 }
 
+int is_multi_char_op(const char* src, int pos) {
+    const char* multi_char_ops[] = { "==", "!=", "<=", ">=", "+=", "-=", "->", "&&", "||" };
+    const int multi_char_ops_count = sizeof(multi_char_ops) / sizeof(multi_char_ops[0]);
+
+    for (int i = 0; i < multi_char_ops_count; i++) {
+        if (src[pos] == multi_char_ops[i][0] && src[pos + 1] == multi_char_ops[i][1]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void tokenise(Lexer* lexer) {
+    
     const char* src = lexer->source;
+    const char* single_char_symbols = "(){}=:+-*/,<>";
+
     while (src[lexer->pos] != '\0') {
         char c = src[lexer->pos];
+
+        int idx = is_multi_char_op(src, lexer->pos);
+        if (idx != -1) {
+            // Add multi-char operator token, length 2
+            add_token(lexer, TOKEN_SYMBOL, src + lexer->pos, 2);
+            lexer->pos += 2;
+            continue;
+        }
             
         if (isspace(c)) {
             lexer->pos++;
@@ -70,13 +93,7 @@ void tokenise(Lexer* lexer) {
             continue;
         }
 
-        if (strchr("(){}=:+-*/,", c)) {
-            add_token(lexer, TOKEN_SYMBOL, &src[lexer->pos], 1);
-            lexer->pos++;
-            continue;
-        }
-
-        if (c == '>') {
+        if (strchr(single_char_symbols, c)) {
             add_token(lexer, TOKEN_SYMBOL, &src[lexer->pos], 1);
             lexer->pos++;
             continue;
