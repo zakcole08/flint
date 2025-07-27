@@ -1,0 +1,34 @@
+# Ignore object files
+*.o
+
+# Ignore executable files
+flint
+*.exe
+
+# Ignore dependency files
+*.d
+
+# Ignore temporary files created by editors
+*~
+*.swp
+*.swo
+
+# Ignore build directories (if any)
+build/
+bin/
+
+# Ignore compiled libraries
+*.a
+*.so
+*.dll
+
+# Ignore logs
+*.log
+
+# Ignore editor/project-specific files
+.vscode/
+.idea/
+*.iml
+
+# Ignore core dumps
+core
